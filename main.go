@@ -8,9 +8,9 @@ import (
 	"strconv"
 	"time"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 // Vinyl represents a vinyl record
@@ -26,7 +26,7 @@ var collection *mongo.Collection
 func main() {
 	// MongoDB connection setup
 	var err error
-        serverAPI := options.ServerAPI(options.ServerAPIVersion1)
+	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
         clientOptions := options.Client().ApplyURI("mongodb+srv://jeanhalle:UMFSuxzi9ePuSjKd@cluster0.hugwz.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0").SetServerAPIOptions(serverAPI)
 
 	client, err = mongo.Connect(context.Background(), clientOptions)
@@ -47,7 +47,21 @@ func vinylHandler(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	cursor, err := collection.Find(ctx, bson.D{})
+	filterQuery := r.URL.Query().Get("filter")
+	filter := bson.D{}
+
+	if filterQuery != "" {
+		filterRegex := bson.D{{"$regex", filterQuery}, {"$options", "i"}}
+		filter = bson.D{
+			{"$or", bson.A{
+				bson.D{{"artist", filterRegex}},
+				bson.D{{"album", filterRegex}},
+				bson.D{{"year", filterRegex}},
+			}},
+		}
+	}
+
+	cursor, err := collection.Find(ctx, filter)
 	if err != nil {
 		http.Error(w, "Unable to fetch records from database", http.StatusInternalServerError)
 		return

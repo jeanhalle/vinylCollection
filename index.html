@@ -14,6 +14,11 @@
 <body>
     <div class="container">
         <h1 class="mt-4 mb-4">Vinyl Collection</h1>
+        <form method="GET" action="/" class="form-inline mb-4">
+            <input type="text" name="filter" class="form-control mr-2" placeholder="Filter by artist, album, or year">
+            <button type="submit" class="btn btn-primary mr-2">Filter</button>
+            <a href="/" class="btn btn-secondary">Clear Filter</a>
+        </form>
         <table class="table table-striped mb-4" id="vinylTable">
             <thead>
                 <tr>
