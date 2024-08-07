@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vinyl Collection</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        th {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-4 mb-4">Vinyl Collection</h1>
+        <table class="table table-striped mb-4" id="vinylTable">
+            <thead>
+                <tr>
+                    <th onclick="sortTable(0)">Artist</th>
+                    <th onclick="sortTable(1)">Album</th>
+                    <th onclick="sortTable(2)">Year</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range .}}
+                <tr>
+                    <td>{{.Artist}}</td>
+                    <td>{{.Album}}</td>
+                    <td>{{.Year}}</td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+        <h2 class="mb-3">Add a new vinyl</h2>
+        <form action="/add" method="post">
+            <div class="form-group">
+                <label for="artist">Artist:</label>
+                <input type="text" id="artist" name="artist" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="album">Album:</label>
+                <input type="text" id="album" name="album" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="year">Year:</label>
+                <input type="number" id="year" name="year" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Add</button>
+        </form>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        function sortTable(columnIndex) {
+            const table = document.getElementById("vinylTable");
+            const tbody = table.tBodies[0];
+            const rows = Array.from(tbody.rows);
+            const asc = !tbody.classList.contains(`sort-asc-${columnIndex}`);
+            
+            rows.sort((a, b) => {
+                const aText = a.cells[columnIndex].innerText.trim();
+                const bText = b.cells[columnIndex].innerText.trim();
+
+                if (columnIndex === 2) {  // If sorting by year
+                    return asc ? aText - bText : bText - aText;
+                } else {
+                    return asc ? aText.localeCompare(bText) : bText.localeCompare(aText);
+                }
+            });
+
+            rows.forEach(row => tbody.appendChild(row));
+            tbody.className = asc ? `sort-asc-${columnIndex}` : `sort-desc-${columnIndex}`;
+        }
+    </script>
+</body>
+</html>
+
