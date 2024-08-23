@@ -106,7 +106,10 @@ func vinylHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tmpl.Execute(w, vinyls)
+	if errTemplate := tmpl.Execute(w, vinyls); errTemplate != nil {
+		log.Println(errTemplate)
+	}
+
 }
 
 func addVinylHandler(w http.ResponseWriter, r *http.Request) {
