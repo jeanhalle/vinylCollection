@@ -14,9 +14,15 @@
     <script>
         function deleteVinyl(id) {
             if (confirm("Are you sure you want to delete this vinyl?")) {
-                fetch(`/vinyls/${id}`, {
-                    method: 'DELETE'
-                })
+                // fetch(`/vinyls/${id}`, {
+                //     method: 'DELETE'
+                // })
+                const formData = new FormData();
+                formData.append('id', id);
+                fetch(`/remove`, {
+                    method: 'POST',
+                    body: formData
+                    })
                 .then(response => {
                     if (response.ok) {
                         window.location.reload();
@@ -53,11 +59,15 @@
                     <td>{{.Album}}</td>
                     <td>{{.Year}}</td>
                     <td>{{.AddedBy}}</td>
+                    {{ if .IsLocked }}
+                    <td></td>
+                    {{ else }}
                     <td>
                         <button onclick="deleteVinyl('{{.ID}}')" type="submit" class="btn btn-link btn-sm">
                             <i class="bi bi-trash"></i>
                         </button>
                     </td>
+                    {{ end }}
                 </tr>
                 {{end}}
             </tbody>
