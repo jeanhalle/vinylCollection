@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"strconv"
 	"time"
+	"fmt"
+	"io/ioutil"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -38,6 +40,33 @@ func main() {
 
 	http.HandleFunc("/", vinylHandler)
 	http.HandleFunc("/add", addVinylHandler)
+
+
+	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		url := "https://curlmyip.org/"
+
+    		// Make the HTTP GET request
+    		resp, err := http.Get(url)
+    		if err != nil {
+        		fmt.Println("Error making the request:", err)
+        		return
+    		}
+    		defer resp.Body.Close()
+
+    		// Read the response body
+    		body, err := ioutil.ReadAll(resp.Body)
+    		if err != nil {
+        		fmt.Println("Error reading the response:", err)
+        		return
+    		}
+
+        	w.WriteHeader(http.StatusOK)
+    		
+		// Print the IP address
+    		w.Write([]byte(string(body)))
+        	//w.Write([]byte("OK"))
+    	})
+
 	log.Println("Server started at http://localhost:8080")
 	http.ListenAndServe(":8080", nil)
 }
