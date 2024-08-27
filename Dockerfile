@@ -23,6 +23,7 @@ WORKDIR /app
 # Copy the built application from the builder stage
 COPY --from=builder /app/main .
 COPY --from=builder /app/index.html .
+COPY --from=builder /app/suggestion.html .
 
 # Expose the port the application will run on
 EXPOSE 8080
