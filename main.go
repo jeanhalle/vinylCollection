@@ -26,8 +26,14 @@ type Vinyl struct {
 	IsLocked bool   `bson:"locked"`
 }
 
+type Suggestion struct {
+	ID    string `bson:"_id,omitempty"`
+	Name  string `bson:"name"`
+}
+
 var client *mongo.Client
 var collection *mongo.Collection
+var suggestion  *mongo.Collection
 
 func main() {
 	// MongoDB connection setup
@@ -41,8 +47,10 @@ func main() {
 	}
 
 	collection = client.Database("vinylstore").Collection("vinyls")
+	suggestion = client.Database("vinylstore").Collection("suggestions")
 
 	http.HandleFunc("/", vinylHandler)
+	http.HandleFunc("/suggestions", suggestionHandler)
 	http.HandleFunc("/add", addVinylHandler)
 	http.HandleFunc("/remove", removeVinylHandler)
 
@@ -161,3 +169,29 @@ func removeVinylHandler(w http.ResponseWriter, r *http.Request) {
 
 	http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 }
+
+func suggestionHandler(w http.ResponseWriter, r *http.Request) {
+	tmpl := template.Must(template.ParseFiles("suggestion.html"))
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	cursor, err := suggestion.Find(ctx, bson.D{})
+	if err != nil {
+		log.Println(err)
+		http.Error(w, "Unable to fetch records from database", http.StatusInternalServerError)
+		return
+	}
+
+	var suggestions []Suggestion
+	if err = cursor.All(ctx, &suggestions); err != nil {
+		http.Error(w, "Unable to decode records from database", http.StatusInternalServerError)
+		return
+	}
+
+	if errTemplate := tmpl.Execute(w, suggestions); errTemplate != nil {
+		log.Println(errTemplate)
+	}
+
+}
+
+

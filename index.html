@@ -10,6 +10,15 @@
         th {
             cursor: pointer;
         }
+
+	/* Custom styles for active menu item */
+        .nav-link.active {
+            background-color: #007bff; /* Bootstrap primary color */
+            color: #fff !important; /* White text color */
+        }
+        .nav-link.active:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
     </style>
     <script>
         function deleteVinyl(id) {
@@ -35,8 +44,32 @@
     </script>
 </head>
 <body>
-    <div class="container">
-        <h1 class="mt-4 mb-4">Justine's Vinyl Collection</h1>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Left Side Menu -->
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+                <div class="position-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" id="collection-link" href="/">
+                                <span data-feather="disc"></span>
+                                Collection
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="suggestions-link" href="/suggestions">
+                                <span data-feather="thumbs-up"></span>
+                                Suggestions
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+    <main>
+
+       <h1 class="mt-4 mb-4">Justine's Vinyl Collection</h1>
         <form method="GET" action="/" class="form-inline mb-4">
             <input type="text" name="filter" class="form-control mr-2" placeholder="Filter by artist, album, or year">
             <button type="submit" class="btn btn-primary mr-2">Filter</button>
@@ -92,7 +125,23 @@
             </div>
             <button type="submit" class="btn btn-primary">Add</button>
         </form>
-    </div>
+    </main>
+</div></div>
+<script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script>
+        // Activate Feather icons
+        feather.replace();
+
+        // Highlight the active menu item based on the current path
+        document.addEventListener('DOMContentLoaded', function() {
+            var path = window.location.pathname;
+            if (path === '/') {
+                document.getElementById('collection-link').classList.add('active');
+            } else if (path === '/suggestions') {
+                document.getElementById('suggestions-link').classList.add('active');
+            }
+        });
+    </script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

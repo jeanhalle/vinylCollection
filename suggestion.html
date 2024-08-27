@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Justine's Vinyl Collection</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        th {
+            cursor: pointer;
+        }
+
+	/* Custom styles for active menu item */
+        .nav-link.active {
+            background-color: #007bff; /* Bootstrap primary color */
+            color: #fff !important; /* White text color */
+        }
+        .nav-link.active:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+        }
+    </style>
+</head>
+<body>
+     <div class="container-fluid">
+        <div class="row">
+            <!-- Left Side Menu -->
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+                <div class="position-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" id="collection-link" href="/">
+                                <span data-feather="disc"></span>
+                                Collection
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="suggestions-link" href="/suggestions">
+                                <span data-feather="thumbs-up"></span>
+                                Suggestions
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+       <main>
+        <h1 class="mt-4 mb-4">Suggestions d'artistes</h1>
+        <table class="table table-striped mb-4" id="vinylTable">
+            <thead>
+                <tr>
+                   <th onclick="sortTable(0)">Artist</th>                    
+                </tr>
+            </thead>
+            <tbody>
+                {{range .}}
+                <tr>
+                    <td>{{.Name}}</td>
+                </tr>
+                {{end}}
+            </tbody>
+        </table>
+    </main>
+    </div></div>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script>
+        // Activate Feather icons
+        feather.replace();
+
+        // Highlight the active menu item based on the current path
+        document.addEventListener('DOMContentLoaded', function() {
+            var path = window.location.pathname;
+            if (path === '/') {
+                document.getElementById('collection-link').classList.add('active');
+            } else if (path === '/suggestions') {
+                document.getElementById('suggestions-link').classList.add('active');
+            }
+        });
+    </script>
+     <script>
+        function sortTable(columnIndex) {
+            const table = document.getElementById("vinylTable");
+            const tbody = table.tBodies[0];
+            const rows = Array.from(tbody.rows);
+            const asc = !tbody.classList.contains(`sort-asc-${columnIndex}`);
+                    
+            rows.sort((a, b) => {
+                const aText = a.cells[columnIndex].innerText.trim();
+                const bText = b.cells[columnIndex].innerText.trim();
+                
+                if (columnIndex === 2) {  // If sorting by year
+                    return asc ? aText - bText : bText - aText;
+                } else {
+                    return asc ? aText.localeCompare(bText) : bText.localeCompare(aText);
+                }   
+            });     
+                    
+            rows.forEach(row => tbody.appendChild(row));
+            tbody.className = asc ? `sort-asc-${columnIndex}` : `sort-desc-${columnIndex}`;
+        }
+	sortTable(0);               
+    </script>               
+</body>                 
+</body>
+</html>
+
